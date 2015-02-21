@@ -1,0 +1,37 @@
+{
+  "name": "easy-daemon",
+  "version": "0.0.1",
+  "description": "Create simple daemon with node script with Pid and Log ",
+  "main": "dist/daemon.js",
+  "scripts": {
+    "prepublish": "grunt compile",
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/esdrasedu/node-daemon.git"
+  },
+  "keywords": [
+    "daemon",
+    "easy",
+    "pid",
+    "log",
+    "simple"
+  ],
+  "author": "Esdras Eduardo <esdrasedu@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/esdrasedu/node-daemon/issues"
+  },
+  "homepage": "https://github.com/esdrasedu/node-daemon",
+  "devDependencies": {
+    "coffeelint": "^1.8.1",
+    "grunt": "^0.4.5",
+    "grunt-coffeelint": "0.0.13",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-mocha-test": "^0.12.7",
+    "mocha": "^2.1.0"
+  }
+}
