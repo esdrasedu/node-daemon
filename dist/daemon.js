@@ -63,17 +63,42 @@
         result += ":" + (dateBeatiful(now.getSeconds()));
         return result;
       };
-      console.log = function(data) {
-        log_file.write((dateNow()) + " [LOG]: " + data + "\n");
-        return process.stdout.write(data + "\n");
+      console.log = function() {
+        var data, datas, i, len;
+        datas = "";
+        if (arguments.length) {
+          for (i = 0, len = arguments.length; i < len; i++) {
+            data = arguments[i];
+            log_file.write((dateNow()) + " [LOG]: " + data + "\n");
+            datas = "" + datas + data + "\n";
+          }
+        }
+        return process.stdout.write(datas);
       };
       console.error = function(data) {
-        log_file.write((dateNow()) + " [Error]: " + data + "\n");
-        return process.stdout.write(data + "\n");
+        var datas, i, len;
+        datas = "";
+        if (arguments.length) {
+          for (i = 0, len = arguments.length; i < len; i++) {
+            data = arguments[i];
+            log_file.write((dateNow()) + " [ERROR]: " + data + "\n");
+            datas = "" + datas + data + "\n";
+          }
+        }
+        return process.stdout.write(datas);
       };
       return console.dir = function(data) {
-        log_file.write((dateNow()) + " [DIR]: " + (util.inspect(data)) + "\n");
-        return process.stdout.write((util.inspect(data)) + "\n");
+        var datas, i, len, msg;
+        datas = "";
+        if (arguments.length) {
+          for (i = 0, len = arguments.length; i < len; i++) {
+            data = arguments[i];
+            msg = util.inspect(data);
+            log_file.write((dateNow()) + " [DIR]: " + msg + "\n");
+            datas = "" + datas + msg + "\n";
+          }
+        }
+        return process.stdout.write(datas);
       };
     }
   };

@@ -43,14 +43,27 @@ module.exports = (name=null, log=true, pid=true)->
       result += ":#{dateBeatiful(now.getSeconds())}"
       result
 
-    console.log = (data)->
-      log_file.write "#{dateNow()} [LOG]: #{data}\n"
-      process.stdout.write "#{data}\n"
+    console.log = ()->
+      datas = ""
+      if arguments.length
+        for data in arguments
+          log_file.write "#{dateNow()} [LOG]: #{data}\n"
+          datas = "#{datas}#{data}\n"
+      process.stdout.write datas
 
     console.error = (data)->
-      log_file.write "#{dateNow()} [Error]: #{data}\n"
-      process.stdout.write "#{data}\n"
+      datas = ""
+      if arguments.length
+        for data in arguments
+          log_file.write "#{dateNow()} [ERROR]: #{data}\n"
+          datas = "#{datas}#{data}\n"
+      process.stdout.write datas
 
     console.dir = (data)->
-      log_file.write "#{dateNow()} [DIR]: #{util.inspect(data)}\n"
-      process.stdout.write "#{util.inspect(data)}\n"
+      datas = ""
+      if arguments.length
+        for data in arguments
+          msg = util.inspect(data)
+          log_file.write "#{dateNow()} [DIR]: #{msg}\n"
+          datas = "#{datas}#{msg}\n"
+      process.stdout.write datas
