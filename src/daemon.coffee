@@ -30,40 +30,25 @@ module.exports = (name=null, log=true, pid=true)->
   if log
     log_file = fs.createWriteStream "#{folder_log}#{name}.log", {flags: "a+"}
     
-    dateBeatiful = (data)->
+    dateBeautiful = (data)->
       if data > 9 then data else "0#{data}"
 
     dateNow = ()->
       now = new Date
-      result = "#{dateBeatiful(now.getDate())}"
-      result += "/#{dateBeatiful(now.getMonth()+1)}"
+      result = "#{dateBeautiful(now.getDate())}"
+      result += "/#{dateBeautiful(now.getMonth()+1)}"
       result += "/#{now.getFullYear()}"
-      result += " #{dateBeatiful(now.getHours())}"
-      result += ":#{dateBeatiful(now.getMinutes())}"
-      result += ":#{dateBeatiful(now.getSeconds())}"
+      result += " #{dateBeautiful(now.getHours())}"
+      result += ":#{dateBeautiful(now.getMinutes())}"
+      result += ":#{dateBeautiful(now.getSeconds())}"
       result
 
-    console.log = ()->
-      datas = ""
-      if arguments.length
-        for data in arguments
-          log_file.write "#{dateNow()} [LOG]: #{data}\n"
-          datas = "#{datas}#{data}\n"
-      process.stdout.write datas
+    process_stdout = process.stdout.write.bind process.stdout
+    process.stdout.write = (data)->
+      log_file.write "#{dateNow()} [LOG]: #{data}"
+      process_stdout data
 
+    process_stderr = process.stderr.write.bind process.stderr
     console.error = (data)->
-      datas = ""
-      if arguments.length
-        for data in arguments
-          log_file.write "#{dateNow()} [ERROR]: #{data}\n"
-          datas = "#{datas}#{data}\n"
-      process.stdout.write datas
-
-    console.dir = (data)->
-      datas = ""
-      if arguments.length
-        for data in arguments
-          msg = util.inspect(data)
-          log_file.write "#{dateNow()} [DIR]: #{msg}\n"
-          datas = "#{datas}#{msg}\n"
-      process.stdout.write datas
+      log_file.write "#{dateNow()} [ERROR]: #{data}"
+      process_stderr data

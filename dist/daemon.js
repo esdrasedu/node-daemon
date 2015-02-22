@@ -6,7 +6,7 @@
   util = require("util");
 
   module.exports = function(name, log, pid) {
-    var dateBeatiful, dateNow, error, folder_log, folder_pid, log_file, pid_file;
+    var dateBeautiful, dateNow, error, folder_log, folder_pid, log_file, pid_file, process_stderr, process_stdout;
     if (name == null) {
       name = null;
     }
@@ -45,7 +45,7 @@
       log_file = fs.createWriteStream("" + folder_log + name + ".log", {
         flags: "a+"
       });
-      dateBeatiful = function(data) {
+      dateBeautiful = function(data) {
         if (data > 9) {
           return data;
         } else {
@@ -55,50 +55,23 @@
       dateNow = function() {
         var now, result;
         now = new Date;
-        result = "" + (dateBeatiful(now.getDate()));
-        result += "/" + (dateBeatiful(now.getMonth() + 1));
+        result = "" + (dateBeautiful(now.getDate()));
+        result += "/" + (dateBeautiful(now.getMonth() + 1));
         result += "/" + (now.getFullYear());
-        result += " " + (dateBeatiful(now.getHours()));
-        result += ":" + (dateBeatiful(now.getMinutes()));
-        result += ":" + (dateBeatiful(now.getSeconds()));
+        result += " " + (dateBeautiful(now.getHours()));
+        result += ":" + (dateBeautiful(now.getMinutes()));
+        result += ":" + (dateBeautiful(now.getSeconds()));
         return result;
       };
-      console.log = function() {
-        var data, datas, i, len;
-        datas = "";
-        if (arguments.length) {
-          for (i = 0, len = arguments.length; i < len; i++) {
-            data = arguments[i];
-            log_file.write((dateNow()) + " [LOG]: " + data + "\n");
-            datas = "" + datas + data + "\n";
-          }
-        }
-        return process.stdout.write(datas);
+      process_stdout = process.stdout.write.bind(process.stdout);
+      process.stdout.write = function(data) {
+        log_file.write((dateNow()) + " [LOG]: " + data);
+        return process_stdout(data);
       };
-      console.error = function(data) {
-        var datas, i, len;
-        datas = "";
-        if (arguments.length) {
-          for (i = 0, len = arguments.length; i < len; i++) {
-            data = arguments[i];
-            log_file.write((dateNow()) + " [ERROR]: " + data + "\n");
-            datas = "" + datas + data + "\n";
-          }
-        }
-        return process.stdout.write(datas);
-      };
-      return console.dir = function(data) {
-        var datas, i, len, msg;
-        datas = "";
-        if (arguments.length) {
-          for (i = 0, len = arguments.length; i < len; i++) {
-            data = arguments[i];
-            msg = util.inspect(data);
-            log_file.write((dateNow()) + " [DIR]: " + msg + "\n");
-            datas = "" + datas + msg + "\n";
-          }
-        }
-        return process.stdout.write(datas);
+      process_stderr = process.stderr.write.bind(process.stderr);
+      return console.error = function(data) {
+        log_file.write((dateNow()) + " [ERROR]: " + data);
+        return process_stderr(data);
       };
     }
   };
