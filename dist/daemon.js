@@ -6,7 +6,7 @@
   util = require("util");
 
   module.exports = function(name, log, pid) {
-    var dateBeautiful, dateNow, error, folder_log, folder_pid, log_file, pid_file, process_stderr, process_stdout;
+    var error, folder_log, folder_pid, log_file, pid_file, process_stderr, process_stdout;
     if (name == null) {
       name = null;
     }
@@ -45,32 +45,14 @@
       log_file = fs.createWriteStream("" + folder_log + name + ".log", {
         flags: "a+"
       });
-      dateBeautiful = function(data) {
-        if (data > 9) {
-          return data;
-        } else {
-          return "0" + data;
-        }
-      };
-      dateNow = function() {
-        var now, result;
-        now = new Date;
-        result = "" + (dateBeautiful(now.getDate()));
-        result += "/" + (dateBeautiful(now.getMonth() + 1));
-        result += "/" + (now.getFullYear());
-        result += " " + (dateBeautiful(now.getHours()));
-        result += ":" + (dateBeautiful(now.getMinutes()));
-        result += ":" + (dateBeautiful(now.getSeconds()));
-        return result;
-      };
       process_stdout = process.stdout.write.bind(process.stdout);
       process.stdout.write = function(data) {
-        log_file.write((dateNow()) + " [LOG]: " + data);
+        log_file.write("[LOG]: " + data);
         return process_stdout(data);
       };
       process_stderr = process.stderr.write.bind(process.stderr);
       return console.error = function(data) {
-        log_file.write((dateNow()) + " [ERROR]: " + data);
+        log_file.write("[ERROR]: " + data);
         return process_stderr(data);
       };
     }

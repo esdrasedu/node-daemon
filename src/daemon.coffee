@@ -29,26 +29,13 @@ module.exports = (name=null, log=true, pid=true)->
 
   if log
     log_file = fs.createWriteStream "#{folder_log}#{name}.log", {flags: "a+"}
-    
-    dateBeautiful = (data)->
-      if data > 9 then data else "0#{data}"
-
-    dateNow = ()->
-      now = new Date
-      result = "#{dateBeautiful(now.getDate())}"
-      result += "/#{dateBeautiful(now.getMonth()+1)}"
-      result += "/#{now.getFullYear()}"
-      result += " #{dateBeautiful(now.getHours())}"
-      result += ":#{dateBeautiful(now.getMinutes())}"
-      result += ":#{dateBeautiful(now.getSeconds())}"
-      result
 
     process_stdout = process.stdout.write.bind process.stdout
     process.stdout.write = (data)->
-      log_file.write "#{dateNow()} [LOG]: #{data}"
+      log_file.write "[LOG]: #{data}"
       process_stdout data
 
     process_stderr = process.stderr.write.bind process.stderr
     console.error = (data)->
-      log_file.write "#{dateNow()} [ERROR]: #{data}"
+      log_file.write "[ERROR]: #{data}"
       process_stderr data
